@@ -50,14 +50,14 @@ function controlBezierPaths(thisObj){
 
   // create array for selected Props of selected Layers
   function forEachProp(targetProps, doSomething){
-    for (var i=0, ii = targetProps.length; i<ii, i++){
+    for (var i=0, ii = targetProps.length; i<ii, i++;){
       doSomething(targetProps[i]);
     }
   }
 
   //Get effect Info
   function forEachEffect(targetLayer, doSomething){
-    for (var i = 1, ii = targetLayer.property("ADBE Effect Parade").numProperties; i < ii, i++){
+    for (var i = 1, ii = targetLayer.property("ADBE Effect Parade").numProperties; i < ii, i++;){
       doSomething(targetLayer.property("ADBE Effect Parade").property(i));
     }
   }
