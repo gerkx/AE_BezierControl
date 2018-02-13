@@ -43,7 +43,7 @@ function controlBezierPaths(thisObj){
 
   // create array of selected layers
   function forEachLayer(targetLayerArray, doSomething){
-    for (var i=0, ii = targetLayerArray.lenght; i<ii; i++){
+    for (var i=0, ii = targetLayerArray.length; i<ii; i++){
       doSomething(targetLayerArray[i]);
     }
   }
@@ -96,7 +96,6 @@ function controlBezierPaths(thisObj){
 
   /* Specific Code */
 
-  //
   function forEachPath(doSomething){
     //assign active comp to var comp
     var comp = getActiveComp();
@@ -113,7 +112,6 @@ function controlBezierPaths(thisObj){
     //store selected paths into array
     var selectedPaths = [];
     var parentLayers = [];
-    //
     forEachLayer(selectedLayers,
       function(selectedLayer){
         var paths = getSelectedProps(selectedLayer);
@@ -131,7 +129,107 @@ function controlBezierPaths(thisObj){
           });
 
         });
+      
+      //Raise Error if no path selected
+      if selectedPaths.length == 0 {
+        var pathError = localize("$$$/AE/Script/CreatePathNulls/ErrorNoPathsSelected=Error: No Paths Selected.");
+        alert(pathError);
+        return
       }
+
+      for (var p = 0; p < selectedPaths.length; p++){
+        doSomething(comp,parentLayers[p], selectedPaths[p]);
+      }
+  }
+  // nix this - only interested in linking points to nulls
+  function linkNullsToPoints(){
+    var undoGroup = localize("$$$/AE/Script/CreatePathNulls/LinkNullsToPathPoints=Link Nulls to Path Points");
+    app.beginUndoGroup(undoGroup);
+
+    forEachPath(function(comp.selectedLayer, path){
+      var pathHierarchy = [];
+      var pathPath = getPropPath(path,pathHierarchy);
+      //Act on path points
+      var pathPoints = getPathPoints(path);
+      for(var i=0, ii = pathPoints.length; i <ii; i++){
+        var nullName = selectedLayer.name + ": " + path.parentProperty.name + " [" + pathHierarchy.join(".") + "." + i + "]";
+        if(comp.layer(nullName) == undefined){
+          var newNull = createNull(comp);
+          newNull.position.setValue(pathPoints[i]);
+          newNull.position.expression = 
+            "var srcLayer = thisComp.layer(\"" + selectedLayer.name + "\"); \r" + 
+            "var srcPath = srcLayer" + pathPath + ".points()[" + i + "]; \r" +
+            "srcLayer.toComp(srcPath);";
+          newNull.name = nullName;
+          newNull.label = 10;
+        }
+      }
+    });
+    app.endUndoGroup();
+  }
+
+  //This is the the function we care about
+  function linkPointsToNulls(){
+    var undoGroup = localize("$$$/AE/Script/CreatPathNulls/LinkPathPointsToNulls=Link Paths Points to Nulls");
+    app.beginUndoGroup(undoGroup);
+
+    forEachPath(function(comp,selectedLayer,path){
+      //Get Prop path to path
+      var pathHierarchy = [];
+      var pathPath = getPropPath(path, pathHierarchy);
+      var nullSet = [];
+      //Act on path points
+      var pathPoints = getPathPoints(path);
+      for (var i = 0, ii = pathPoints.length; i < ii; i++){
+        var nullName = selectedLayer.name + ": " + path.parentProperty.name + " [" + pathHierarchy.join(".") + "." + i + "]";
+        nullSet.push(nullName);
+
+        // Get names of nulls that don't exist yet and crate them
+        if(comp.layer(nullName) == undefined){
+          //Create Nulls
+          var newNull = createNull(comp);
+          //Null Layer Name
+          newNull.name = nullName;
+          newNull.label = 11;
+
+          //Set Position using layer space transforms, then remove exp
+          newNull.position.setValue(pathPoints[i]);
+          newNull.position.expression = 
+            "var srcLayer = thisComp.layer(\"" + selectedLayer.name + "\"); \r" + 
+            "var srcPath = srcLayer" + pathPath + ".points()[" + i + "]; \r" +
+            "srcLayer.toComp(srcPath);";
+          newNull.position.setValue(newNull.position.value);
+          newNull.position.expression = '';
+        }
+      }
+      //Get any existing layer control effects
+      var existingEffects = [];
+      forEachEffect(selectedLayer,function(targetEffect){
+        if(matchMatchName(targetEffect,"ADBE Layer Control") != null){
+          existingEffects.push(targetEffect.name);
+        }              
+      });
+
+      //Add new layer control effects for each null
+      for(var n = 0; n < nullSet.length; n++){
+        if(existingEffects.join("|").indexOf(nullSet[n]) != -1){//If layer control effects exist, relink
+          selectedLayer.property("ADBE Effect Parade")(nullSet[n]).property("ADBE Layer Control-0001").setValue(comp.layer(nullset[n]).index);
+        } else {
+          var newControl = selectedLayer.property("ADBE Effect Parade").addProperty("ADBE Layer Control");
+          newControl.name = nullSet[n];
+          newControl.property("ADBE Layer Control-0001").setValue(comp.layer(nullSet[n]).index);
+        }
+      }
+
+      //Set path Expression that ref nulls
+      
+    
+    })
+
+
+  }
+
+
 
 
 
