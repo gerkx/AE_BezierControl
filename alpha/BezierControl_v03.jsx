@@ -120,6 +120,22 @@
         return path.value.outTangents;
     }
 
+    // function tangentCreate(layerName, grpName, label, handleSize){
+    //     var tanShape = comp.layers.addShape();
+    //     tanShape.name = layerName + " boob" + i;
+    //     tanShape.label = label;
+    //     var tanContents = tanShape.property("ADBE Root Vectors Group");
+    //     var tanGrp = tanContents.addProperty("ADBE Vector Group");
+    //     tanOutGrp.name = grpName;
+    //     var handle = tanOutGrp.content.addProperty("ADBE Vector Shape - Rect");
+    //     handle.name = "tanHandle";
+    //     var tanFill = tanOutGrp.content.addProperty("ADBE Vector Graphic - Fill");
+    //     handle = tanGrp.content.property("ADBE Vector Shape - Rect");
+    //     var handleSize = handle.property("ADBE Vector Rect Size");
+    //     handleSize.setValue([handleSize,handleSize]);
+        
+    // }
+
     /* Project specific code */
     function forEachPath(doSomething) {
 
@@ -210,10 +226,31 @@
                     var tanOutNull = createNull(comp);
                     tanOutNull.name = tanOutName;
                     tanOutNull.label = 11
+                    // tanOut Shape Layer Construct
+                    var tanOutShape = comp.layers.addShape();
+                    tanOutShape.name = tanOutName + " boob" + i;
+                    tanOutShape.label = 11;
+                    var tanOutContents = tanOutShape.property("ADBE Root Vectors Group");
+                    var tanOutGrp = tanOutContents.addProperty("ADBE Vector Group");
+                    tanOutGrp.name = "tanOut";
+                    var handleOut = tanOutGrp.content.addProperty("ADBE Vector Shape - Rect");
+                    handleOut.name = "tanOutHandle";
+                    var tanOutFill = tanOutGrp.content.addProperty("ADBE Vector Graphic - Fill");
+                    handleOut = tanOutGrp.content.property("ADBE Vector Shape - Rect");
+                    var handleOutSize = handleOut.property("ADBE Vector Rect Size");
+                    handleOutSize.setValue([50,50]);
                     //point Null
                     var pointNull = createNull(comp);
                     pointNull.name = pointName;
                     pointNull.label = 10;
+                    
+                    
+
+
+
+
+
+
                     
                    
 
@@ -235,6 +272,14 @@
                         "srcLayer.toComp(srcPath);";
                     tanOutNull.position.setValue(tanOutNull.position.value);
                     tanOutNull.position.expression = '';
+
+                    tanOutShape.position.setValue(pathOutTangents[i]);
+                    tanOutShape.position.expression =
+                        "var srcLayer = thisComp.layer(\"" + selectedLayer.name + "\"); \r" +
+                        "var srcPath = srcLayer" + pathPath + ".points()[" + i + "] + srcLayer" + pathPath + ".outTangents()[" + i + "]; \r" +
+                        "srcLayer.toComp(srcPath);";
+                    tanOutShape.position.setValue(tanOutNull.position.value);
+                    tanOutShape.position.expression = '';
 
                     // Set position using layer space transforms, then remove expressions
                     tanInNull.position.setValue(pathInTangents[i]);
@@ -260,6 +305,19 @@
 
                     ///TAN OUT Expressions
                     tanOutNull.rotation.expression =
+                        "pt = thisComp.layer(\"" + nullSet[i] + "\"); \r" +
+                        "//Get point position \r" +
+                        "ptPos = pt.toWorld(pt.anchorPoint); \r" +
+                        "//Get tanOut Position \r" +
+                        "tanOutPos = thisLayer.toWorld(thisLayer.anchorPoint); \r" +
+                        "//Get angle between Pt and tanOUt \r" +
+                        "v = tanOutPos - ptPos; \r" +
+                        "r= radiansToDegrees( Math.atan2( v[1], v[0] ) ); \r" +
+                        "// Output degrees \r" +
+                        "r";
+                    
+                    
+                    tanOutShape.rotation.expression =
                         "pt = thisComp.layer(\"" + nullSet[i] + "\"); \r" +
                         "//Get point position \r" +
                         "ptPos = pt.toWorld(pt.anchorPoint); \r" +
