@@ -216,7 +216,36 @@
 
                 // Get names of nulls that don't exist yet and create them
                 if (comp.layer(pointName) == undefined) {
+                    // Point shape creation                    
+                    var ptShape = comp.layers.addShape();
+                    ptShape.name = pointName + " dong" + i;
+                    ptShape.label = 10;
+                    var ptContents = ptShape.property("ADBE Root Vectors Group");
+                    var ptGrp = ptContents.addProperty("ADBE Vector Group");
+                    ptGrp.name = "point";
+                    
+                    var centerPtGrp = ptGrp.content.addProperty("ADBE Vector Group");
+                    centerPtGrp.name = "dot";
+                    
+                    var dot = centerPtGrp.content.addProperty("ADBE Vector Shape - Ellipse");
+                    dot.name = "dot";
+                    var dotFill = centerPtGrp.content.addProperty("ADBE Vector Graphic - Fill");
+                    dot = centerPtGrp.content.property("ADBE Vector Shape - Ellipse");
+                    var dotSize = dot.property("ADBE Vector Ellipse Size");
+                    dotSize.setValue([6,6]);
 
+                    var ringPtGrp = ptGrp.content.addProperty("ADBE Vector Group");
+                    ringPtGrp.name = "ring";
+                    
+                    var ring = ringPtGrp.content.addProperty("ADBE Vector Shape - Ellipse");
+                    ring.name = "ring";
+                    var ringStroke = ringPtGrp.content.addProperty("ADBE Vector Graphic - Stroke");
+                    ring = ringPtGrp.content.property("ADBE Vector Shape - Ellipse");
+                    var ringSize = ring.property("ADBE Vector Ellipse Size");
+                    ringSize.setValue([25,25]);
+                    
+                    
+                    
                     //Create nulls
                     //tanIn
                     var tanInNull = createNull(comp);
@@ -233,13 +262,33 @@
                     var tanOutContents = tanOutShape.property("ADBE Root Vectors Group");
                     var tanOutGrp = tanOutContents.addProperty("ADBE Vector Group");
                     tanOutGrp.name = "tanOut";
-                    var handleOut = tanOutGrp.content.addProperty("ADBE Vector Shape - Rect");
+                    
+                    var handleOutGrp = tanOutGrp.content.addProperty("ADBE Vector Group");
+                    handleOutGrp.name = "handleOut";
+
+                    var handleOut = handleOutGrp.content.addProperty("ADBE Vector Shape - Rect");
                     handleOut.name = "tanOutHandle";
-                    var tanOutFill = tanOutGrp.content.addProperty("ADBE Vector Graphic - Fill");
-                    handleOut = tanOutGrp.content.property("ADBE Vector Shape - Rect");
+                    var tanOutFill = handleOutGrp.content.addProperty("ADBE Vector Graphic - Fill");
+                    handleOut = handleOutGrp.content.property("ADBE Vector Shape - Rect");
                     var handleOutSize = handleOut.property("ADBE Vector Rect Size");
-                    handleOutSize.setValue([50,50]);
-                    //point Null
+                    handleOutSize.setValue([15,15]);
+
+                    var lineOutGrp = tanOutGrp.content.addProperty("ADBE Vector Group");
+                    lineOutGrp.name = "lineOut";
+
+                    var lineOut = lineOutGrp.content.addProperty("ADBE Vector Shape - Rect");
+                    lineOut.name = "tanOuLine";
+                    var lineOutFill = lineOutGrp.content.addProperty("ADBE Vector Graphic - Fill");
+                    lineOut = lineOutGrp.content.property("ADBE Vector Shape - Rect");
+                    var lineOutSize = lineOut.property("ADBE Vector Rect Size");
+                    lineOutSize.setValue([200,3]);
+
+
+                    
+
+
+
+                    // point Null
                     var pointNull = createNull(comp);
                     pointNull.name = pointName;
                     pointNull.label = 10;
@@ -262,6 +311,15 @@
                         "srcLayer.toComp(srcPath);";
                     pointNull.position.setValue(pointNull.position.value);
                     pointNull.position.expression = '';
+
+                    ptShape.position.setValue(pathPoints[i]);
+                    ptShape.position.expression =
+                        "var srcLayer = thisComp.layer(\"" + selectedLayer.name + "\"); \r" +
+                        "var srcPath = srcLayer" + pathPath + ".points()[" + i + "]; \r" +
+                        "srcLayer.toComp(srcPath);";
+                    ptShape.position.setValue(pointNull.position.value);
+                    ptShape.position.expression = '';
+
 
                     // Set position using layer space transforms, then remove expressions
                     tanOutNull.position.setValue(pathOutTangents[i]);
