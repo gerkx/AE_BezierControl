@@ -218,7 +218,7 @@
                 if (comp.layer(pointName) == undefined) {
                     // tan In Shape Creation
                     var tanInShape = comp.layers.addShape();
-                    tanInShape.name = tanInName + " dingle" + i;
+                    tanInShape.name = tanInName + i;
                     tanInShape.label = 12;
                     var tanInContents = tanInShape.property("ADBE Root Vectors Group");
                     var tanInGrp = tanInContents.addProperty("ADBE Vector Group");
@@ -227,27 +227,27 @@
                     var handleInGrp = tanInGrp.content.addProperty("ADBE Vector Group");
                     handleInGrp.name = "handleIn";
 
-                    var handleIn = handleInGrp.content.addProperty("ADBE Vector Shape - Rect");
+                    var handleIn = handleInGrp.content.addProperty("ADBE Vector Shape - Ellipse");
                     handleIn.name = "tanInHandle";
                     var tanInFill = handleInGrp.content.addProperty("ADBE Vector Graphic - Fill");
-                    handleIn = handleInGrp.content.property("ADBE Vector Shape - Rect");
-                    var handleInSize = handleIn.property("ADBE Vector Rect Size");
+                    handleIn = handleInGrp.content.property("ADBE Vector Shape - Ellipse");
+                    var handleInSize = handleIn.property("ADBE Vector Ellipse Size");
                     handleInSize.setValue([15,15]);
 
                     var lineInGrp = tanInGrp.content.addProperty("ADBE Vector Group");
                     lineInGrp.name = "lineIn";
 
-                    var lineIn = lineInGrp.content.addProperty("ADBE Vector Shape - Ellipse");
+                    var lineIn = lineInGrp.content.addProperty("ADBE Vector Shape - Rect");
                     lineIn.name = "tanInLine";
                     var lineInFill = lineInGrp.content.addProperty("ADBE Vector Graphic - Fill");
-                    lineIn = lineInGrp.content.property("ADBE Vector Shape - Ellipse");
-                    var lineInSize = lineIn.property("ADBE Vector Ellipse Size");
+                    lineIn = lineInGrp.content.property("ADBE Vector Shape - Rect");
+                    var lineInSize = lineIn.property("ADBE Vector Rect Size");
                     lineInSize.setValue([200,3]);
 
 
                     // tanOut Shape Layer Construct
                     var tanOutShape = comp.layers.addShape();
-                    tanOutShape.name = tanOutName + " boob" + i;
+                    tanOutShape.name = tanOutName + i;
                     tanOutShape.label = 11;
                     var tanOutContents = tanOutShape.property("ADBE Root Vectors Group");
                     var tanOutGrp = tanOutContents.addProperty("ADBE Vector Group");
@@ -276,7 +276,7 @@
                     
                     // Point shape creation                    
                     var ptShape = comp.layers.addShape();
-                    ptShape.name = pointName + " dong" + i;
+                    ptShape.name = pointName + "dingleberry" + i;
                     ptShape.label = 10;
                     var ptContents = ptShape.property("ADBE Root Vectors Group");
                     var ptGrp = ptContents.addProperty("ADBE Vector Group");
@@ -355,6 +355,26 @@
                         "srcLayer.toComp(srcPath);";
                     tanOutShape.position.setValue(tanOutNull.position.value);
                     tanOutShape.position.expression = '';
+
+                    
+                    lineOutGrp.property("ADBE Vector Transform Group")("ADBE Vector Anchor").expression =
+                        
+                    "pt = thisComp.layer(\"" + ptShape.name + "\"); \r" +
+                    "ptPos = pt.toWorld(pt.anchorPoint); \r" +
+                    "radius = pt.content(\"" + ptGrp.name + "\").content(\"" + ringPtGrp.name+ "\").content(\"" + ring.name + "\").size[0]*.5; \r" +
+                    "tanOutPos = thisLayer.toWorld(thisLayer.anchorPoint); \r" +
+                    "sizeX = length(ptPos, tanOutPos)-radius; \r" +
+                    "sizeY = value[1]; \r" +
+                    "[sizeX, sizeY] \r";
+                                        
+
+
+
+
+
+
+
+
 
                     // Set position using layer space transforms, then remove expressions
                     tanInNull.position.setValue(pathInTangents[i]);
