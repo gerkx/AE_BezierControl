@@ -196,9 +196,9 @@
             // Get property path to path
             var pathHierarchy = [];
             var pathPath = getPropPath(path, pathHierarchy);
-            var nullSet = [];
-            var nullInSet = [];
-            var nullOutSet = [];
+            var ptSet = [];
+            var tanInSet = [];
+            var tanOutSet = [];
             // Do things with the path points
             var pathPoints = getPathPoints(path);
             var pathInTangents = getPathInTangents(path); // there will be two tangents for each point except the first and last, if the path's open
@@ -210,12 +210,70 @@
                 var pointName = selectedLayer.name + ": " + path.parentProperty.name + " [" + pathHierarchy.join(".") + "." + i + "]";
                 var tanInName = selectedLayer.name + ": " + path.parentProperty.name + " IN [" + pathHierarchy.join(".") + "." + i + "]";
                 var tanOutName = selectedLayer.name + ": " + path.parentProperty.name + " OUT [" + pathHierarchy.join(".") + "." + i + "]";
-                nullSet.push(pointName);
-                nullInSet.push(tanInName);
-                nullOutSet.push(tanOutName);
+                ptSet.push(pointName);
+                tanInSet.push(tanInName);
+                tanOutSet.push(tanOutName);
 
                 // Get names of nulls that don't exist yet and create them
                 if (comp.layer(pointName) == undefined) {
+                    // tan In Shape Creation
+                    var tanInShape = comp.layers.addShape();
+                    tanInShape.name = tanInName + " dingle" + i;
+                    tanInShape.label = 12;
+                    var tanInContents = tanInShape.property("ADBE Root Vectors Group");
+                    var tanInGrp = tanInContents.addProperty("ADBE Vector Group");
+                    tanInGrp.name = "tanIn";
+                    
+                    var handleInGrp = tanInGrp.content.addProperty("ADBE Vector Group");
+                    handleInGrp.name = "handleIn";
+
+                    var handleIn = handleInGrp.content.addProperty("ADBE Vector Shape - Rect");
+                    handleIn.name = "tanInHandle";
+                    var tanInFill = handleInGrp.content.addProperty("ADBE Vector Graphic - Fill");
+                    handleIn = handleInGrp.content.property("ADBE Vector Shape - Rect");
+                    var handleInSize = handleIn.property("ADBE Vector Rect Size");
+                    handleInSize.setValue([15,15]);
+
+                    var lineInGrp = tanInGrp.content.addProperty("ADBE Vector Group");
+                    lineInGrp.name = "lineIn";
+
+                    var lineIn = lineInGrp.content.addProperty("ADBE Vector Shape - Ellipse");
+                    lineIn.name = "tanInLine";
+                    var lineInFill = lineInGrp.content.addProperty("ADBE Vector Graphic - Fill");
+                    lineIn = lineInGrp.content.property("ADBE Vector Shape - Ellipse");
+                    var lineInSize = lineIn.property("ADBE Vector Ellipse Size");
+                    lineInSize.setValue([200,3]);
+
+
+                    // tanOut Shape Layer Construct
+                    var tanOutShape = comp.layers.addShape();
+                    tanOutShape.name = tanOutName + " boob" + i;
+                    tanOutShape.label = 11;
+                    var tanOutContents = tanOutShape.property("ADBE Root Vectors Group");
+                    var tanOutGrp = tanOutContents.addProperty("ADBE Vector Group");
+                    tanOutGrp.name = "tanOut";
+                    
+                    var handleOutGrp = tanOutGrp.content.addProperty("ADBE Vector Group");
+                    handleOutGrp.name = "handleOut";
+
+                    var handleOut = handleOutGrp.content.addProperty("ADBE Vector Shape - Rect");
+                    handleOut.name = "tanOutHandle";
+                    var tanOutFill = handleOutGrp.content.addProperty("ADBE Vector Graphic - Fill");
+                    handleOut = handleOutGrp.content.property("ADBE Vector Shape - Rect");
+                    var handleOutSize = handleOut.property("ADBE Vector Rect Size");
+                    handleOutSize.setValue([15,15]);
+
+                    var lineOutGrp = tanOutGrp.content.addProperty("ADBE Vector Group");
+                    lineOutGrp.name = "lineOut";
+
+                    var lineOut = lineOutGrp.content.addProperty("ADBE Vector Shape - Rect");
+                    lineOut.name = "tanOutLine";
+                    var lineOutFill = lineOutGrp.content.addProperty("ADBE Vector Graphic - Fill");
+                    lineOut = lineOutGrp.content.property("ADBE Vector Shape - Rect");
+                    var lineOutSize = lineOut.property("ADBE Vector Rect Size");
+                    lineOutSize.setValue([200,3]);
+                    
+                    
                     // Point shape creation                    
                     var ptShape = comp.layers.addShape();
                     ptShape.name = pointName + " dong" + i;
@@ -255,52 +313,12 @@
                     var tanOutNull = createNull(comp);
                     tanOutNull.name = tanOutName;
                     tanOutNull.label = 11
-                    // tanOut Shape Layer Construct
-                    var tanOutShape = comp.layers.addShape();
-                    tanOutShape.name = tanOutName + " boob" + i;
-                    tanOutShape.label = 11;
-                    var tanOutContents = tanOutShape.property("ADBE Root Vectors Group");
-                    var tanOutGrp = tanOutContents.addProperty("ADBE Vector Group");
-                    tanOutGrp.name = "tanOut";
-                    
-                    var handleOutGrp = tanOutGrp.content.addProperty("ADBE Vector Group");
-                    handleOutGrp.name = "handleOut";
-
-                    var handleOut = handleOutGrp.content.addProperty("ADBE Vector Shape - Rect");
-                    handleOut.name = "tanOutHandle";
-                    var tanOutFill = handleOutGrp.content.addProperty("ADBE Vector Graphic - Fill");
-                    handleOut = handleOutGrp.content.property("ADBE Vector Shape - Rect");
-                    var handleOutSize = handleOut.property("ADBE Vector Rect Size");
-                    handleOutSize.setValue([15,15]);
-
-                    var lineOutGrp = tanOutGrp.content.addProperty("ADBE Vector Group");
-                    lineOutGrp.name = "lineOut";
-
-                    var lineOut = lineOutGrp.content.addProperty("ADBE Vector Shape - Rect");
-                    lineOut.name = "tanOuLine";
-                    var lineOutFill = lineOutGrp.content.addProperty("ADBE Vector Graphic - Fill");
-                    lineOut = lineOutGrp.content.property("ADBE Vector Shape - Rect");
-                    var lineOutSize = lineOut.property("ADBE Vector Rect Size");
-                    lineOutSize.setValue([200,3]);
-
-
-                    
-
-
-
                     // point Null
                     var pointNull = createNull(comp);
                     pointNull.name = pointName;
                     pointNull.label = 10;
                     
-                    
-
-
-
-
-
-
-                    
+                                       
                    
 
                     // Set point position using layer space transforms, then remove expressions
@@ -323,7 +341,6 @@
 
                     // Set position using layer space transforms, then remove expressions
                     tanOutNull.position.setValue(pathOutTangents[i]);
-
                     tanOutNull.position.expression =
                         "var srcLayer = thisComp.layer(\"" + selectedLayer.name + "\"); \r" +
                         "var srcPath = srcLayer" + pathPath + ".points()[" + i + "] + srcLayer" + pathPath + ".outTangents()[" + i + "]; \r" +
@@ -348,12 +365,20 @@
                     tanInNull.position.setValue(tanInNull.position.value);
                     tanInNull.position.expression = '';
 
+                    tanInShape.position.setValue(pathInTangents[i]);
+                    tanInShape.position.expression =
+                        "var srcLayer = thisComp.layer(\"" + selectedLayer.name + "\"); \r" +
+                        "var srcPath = srcLayer" + pathPath + ".points()[" + i + "] + srcLayer" + pathPath + ".inTangents()[" + i + "]; \r" +
+                        "srcLayer.toComp(srcPath);";
+                    tanInShape.position.setValue(tanInNull.position.value);
+                    tanInShape.position.expression = '';
+
 
                     var ptGroup = pointNull.property("ADBE Effect Parade").addProperty("ADBE Slider Control");
                     ptGroup.name = "Init Tangent Out Dist";
                     ptGroup.property("ADBE Slider Control-0001").expression =
-                        "pt = thisComp.layer(\"" + nullSet[i] + "\"); \r" +
-                        "tan = thisComp.layer(\"" + nullOutSet[i] + "\"); \r" +
+                        "pt = thisComp.layer(\"" + ptSet[i] + "\"); \r" +
+                        "tan = thisComp.layer(\"" + tanOutSet[i] + "\"); \r" +
                         "ptPos = pt.toWorld(pt.anchorPoint); \r" +
                         "tanPos = tan.toWorld(tan.anchorPoint); \r" +
                         "l = length(ptPos, tanPos); \r" +
@@ -363,28 +388,20 @@
 
                     ///TAN OUT Expressions
                     tanOutNull.rotation.expression =
-                        "pt = thisComp.layer(\"" + nullSet[i] + "\"); \r" +
-                        "//Get point position \r" +
+                        "pt = thisComp.layer(\"" + ptSet[i] + "\"); \r" +
                         "ptPos = pt.toWorld(pt.anchorPoint); \r" +
-                        "//Get tanOut Position \r" +
                         "tanOutPos = thisLayer.toWorld(thisLayer.anchorPoint); \r" +
-                        "//Get angle between Pt and tanOUt \r" +
                         "v = tanOutPos - ptPos; \r" +
                         "r= radiansToDegrees( Math.atan2( v[1], v[0] ) ); \r" +
-                        "// Output degrees \r" +
                         "r";
                     
                     
                     tanOutShape.rotation.expression =
-                        "pt = thisComp.layer(\"" + nullSet[i] + "\"); \r" +
-                        "//Get point position \r" +
+                        "pt = thisComp.layer(\"" + ptSet[i] + "\"); \r" +
                         "ptPos = pt.toWorld(pt.anchorPoint); \r" +
-                        "//Get tanOut Position \r" +
                         "tanOutPos = thisLayer.toWorld(thisLayer.anchorPoint); \r" +
-                        "//Get angle between Pt and tanOUt \r" +
                         "v = tanOutPos - ptPos; \r" +
                         "r= radiansToDegrees( Math.atan2( v[1], v[0] ) ); \r" +
-                        "// Output degrees \r" +
                         "r";
 
 
@@ -398,8 +415,8 @@
                         "//linkToggle \r" +
                         "tog = effect(\"Constrain to Parent\")(\"Checkbox\"); \r" +
                         "//Set Reference Layers \r" +
-                        "pt = thisComp.layer(\"" + nullSet[i] + "\"); \r" +
-                        "TanOut = thisComp.layer(\"" + nullOutSet[i] + "\"); \r" +
+                        "pt = thisComp.layer(\"" + ptSet[i] + "\"); \r" +
+                        "TanOut = thisComp.layer(\"" + tanOutSet[i] + "\"); \r" +
                         "//Get Init Data \r" +
                         "InitTanOutDist = pt.effect(\"Init Tangent Out Dist\")(\"Slider\"); \r" +
                         "//Get global point position \r" +
@@ -424,7 +441,7 @@
                     //set tan in rotation
                     tanInNull.rotation.expression =
                         "//Set Reference Layers \r" +
-                        "pt = thisComp.layer(\"" + nullSet[i] + "\"); \r" +
+                        "pt = thisComp.layer(\"" + ptSet[i] + "\"); \r" +
                         "//Get global point position \r" +
                         "ptPos = pt.toWorld(pt.anchorPoint); \r" +
                         "//Get tanOut Position \r" +
@@ -441,8 +458,8 @@
                         "r-parentRotate";
                     
                     //Assign Parents
-                    tanOutNull.parent = comp.layer(nullSet[i]);
-                    tanInNull.parent = comp.layer(nullOutSet[i]);
+                    tanOutNull.parent = comp.layer(ptSet[i]);
+                    tanInNull.parent = comp.layer(tanOutSet[i]);
                 }
 
             }
@@ -456,42 +473,42 @@
             });
 
             // Add new layer control effects for each null
-            for (var n = 0; n < nullSet.length; n++) {
-                if (existingEffects.join("|").indexOf(nullSet[n]) != -1) { //If layer control effect exists, relink it to null
-                    selectedLayer.property("ADBE Effect Parade")(nullSet[n]).property("ADBE Layer Control-0001").setValue(comp.layer(nullSet[n]).index);
+            for (var n = 0; n < ptSet.length; n++) {
+                if (existingEffects.join("|").indexOf(ptSet[n]) != -1) { //If layer control effect exists, relink it to null
+                    selectedLayer.property("ADBE Effect Parade")(ptSet[n]).property("ADBE Layer Control-0001").setValue(comp.layer(ptSet[n]).index);
                 } else {
                     var newControl = selectedLayer.property("ADBE Effect Parade").addProperty("ADBE Layer Control");
-                    newControl.name = nullSet[n];
-                    newControl.property("ADBE Layer Control-0001").setValue(comp.layer(nullSet[n]).index);
+                    newControl.name = ptSet[n];
+                    newControl.property("ADBE Layer Control-0001").setValue(comp.layer(ptSet[n]).index);
                 }
             }
 
-            for (var n = 0; n < nullInSet.length; n++) {
-                if (existingEffects.join("|").indexOf(nullInSet[n]) != -1) { //If layer control effect exists, relink it to null
-                    selectedLayer.property("ADBE Effect Parade")(nullInSet[n]).property("ADBE Layer Control-0001").setValue(comp.layer(nullInSet[n]).index);
+            for (var n = 0; n < tanInSet.length; n++) {
+                if (existingEffects.join("|").indexOf(tanInSet[n]) != -1) { //If layer control effect exists, relink it to null
+                    selectedLayer.property("ADBE Effect Parade")(tanInSet[n]).property("ADBE Layer Control-0001").setValue(comp.layer(tanInSet[n]).index);
                 } else {
                     var newControl = selectedLayer.property("ADBE Effect Parade").addProperty("ADBE Layer Control");
-                    newControl.name = nullInSet[n];
-                    newControl.property("ADBE Layer Control-0001").setValue(comp.layer(nullInSet[n]).index);
+                    newControl.name = tanInSet[n];
+                    newControl.property("ADBE Layer Control-0001").setValue(comp.layer(tanInSet[n]).index);
                 }
             }
 
-            for (var n = 0; n < nullOutSet.length; n++) {
-                if (existingEffects.join("|").indexOf(nullOutSet[n]) != -1) { //If layer control effect exists, relink it to null
-                    selectedLayer.property("ADBE Effect Parade")(nullOutSet[n]).property("ADBE Layer Control-0001").setValue(comp.layer(nullOutSet[n]).index);
+            for (var n = 0; n < tanOutSet.length; n++) {
+                if (existingEffects.join("|").indexOf(tanOutSet[n]) != -1) { //If layer control effect exists, relink it to null
+                    selectedLayer.property("ADBE Effect Parade")(tanOutSet[n]).property("ADBE Layer Control-0001").setValue(comp.layer(tanOutSet[n]).index);
                 } else {
                     var newControl = selectedLayer.property("ADBE Effect Parade").addProperty("ADBE Layer Control");
-                    newControl.name = nullOutSet[n];
-                    newControl.property("ADBE Layer Control-0001").setValue(comp.layer(nullOutSet[n]).index);
+                    newControl.name = tanOutSet[n];
+                    newControl.property("ADBE Layer Control-0001").setValue(comp.layer(tanOutSet[n]).index);
                 }
             }
 
             // Set path expression that references nulls
             path.expression =
 
-                "var nullPointLayerNames = [\"" + nullSet.join("\",\"") + "\"]; \r" +
-                "var nullTanInLayerNames = [\"" + nullInSet.join("\",\"") + "\"]; \r" +
-                "var nullTanOutLayerNames = [\"" + nullOutSet.join("\",\"") + "\"]; \r" +
+                "var nullPointLayerNames = [\"" + ptSet.join("\",\"") + "\"]; \r" +
+                "var nullTanInLayerNames = [\"" + tanInSet.join("\",\"") + "\"]; \r" +
+                "var nullTanOutLayerNames = [\"" + tanOutSet.join("\",\"") + "\"]; \r" +
                 "var origPath = thisProperty; \r" +
                 "var origPoints = origPath.points(); \r" +
                 "var origInTang = origPath.inTangents(); \r" +
