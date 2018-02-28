@@ -218,7 +218,7 @@
                 if (comp.layer(pointName) == undefined) {
                     // tan In Shape Creation
                     var tanInShape = comp.layers.addShape();
-                    tanInShape.name = tanInName + i;
+                    tanInShape.name = tanInName;
                     tanInShape.label = 12;
                     var tanInContents = tanInShape.property("ADBE Root Vectors Group");
                     var tanInGrp = tanInContents.addProperty("ADBE Vector Group");
@@ -242,12 +242,12 @@
                     var lineInFill = lineInGrp.content.addProperty("ADBE Vector Graphic - Fill");
                     lineIn = lineInGrp.content.property("ADBE Vector Shape - Rect");
                     var lineInSize = lineIn.property("ADBE Vector Rect Size");
-                    lineInSize.setValue([200,3]);
+                    lineInSize.setValue([200,2]);
 
 
                     // tanOut Shape Layer Construct
                     var tanOutShape = comp.layers.addShape();
-                    tanOutShape.name = tanOutName + i;
+                    tanOutShape.name = tanOutName;
                     tanOutShape.label = 11;
                     var tanOutContents = tanOutShape.property("ADBE Root Vectors Group");
                     var tanOutGrp = tanOutContents.addProperty("ADBE Vector Group");
@@ -271,12 +271,12 @@
                     var lineOutFill = lineOutGrp.content.addProperty("ADBE Vector Graphic - Fill");
                     lineOut = lineOutGrp.content.property("ADBE Vector Shape - Rect");
                     var lineOutSize = lineOut.property("ADBE Vector Rect Size");
-                    lineOutSize.setValue([200,3]);
+                    lineOutSize.setValue([200,2]);
                     
                     
                     // Point shape creation                    
                     var ptShape = comp.layers.addShape();
-                    ptShape.name = pointName + "dingleberry" + i;
+                    ptShape.name = pointName;
                     ptShape.label = 10;
                     var ptContents = ptShape.property("ADBE Root Vectors Group");
                     var ptGrp = ptContents.addProperty("ADBE Vector Group");
@@ -302,184 +302,139 @@
                     var ringSize = ring.property("ADBE Vector Ellipse Size");
                     ringSize.setValue([25,25]);
                     
-                    
-                    
-                    //Create nulls
-                    //tanIn
-                    var tanInNull = createNull(comp);
-                    tanInNull.name = tanInName;
-                    tanInNull.label = 12;
-                    //tanOut
-                    var tanOutNull = createNull(comp);
-                    tanOutNull.name = tanOutName;
-                    tanOutNull.label = 11
-                    // point Null
-                    var pointNull = createNull(comp);
-                    pointNull.name = pointName;
-                    pointNull.label = 10;
-                    
-                                       
-                   
 
                     // Set point position using layer space transforms, then remove expressions
-                    pointNull.position.setValue(pathPoints[i]);
-                    pointNull.position.expression =
-                        "var srcLayer = thisComp.layer(\"" + selectedLayer.name + "\"); \r" +
-                        "var srcPath = srcLayer" + pathPath + ".points()[" + i + "]; \r" +
-                        "srcLayer.toComp(srcPath);";
-                    pointNull.position.setValue(pointNull.position.value);
-                    pointNull.position.expression = '';
+                    var ptGroup = ptShape.property("ADBE Effect Parade").addProperty("ADBE Slider Control");
+                    ptGroup.name = "Init Tangent Out Dist";
+                    var ptSlide = ptShape.property("Effects").property("Init Tangent Out Dist");
+                    // ptGroup.property("ADBE Slider Control-0001").expression =
+                    ptSlide.expression=
+                        "pt = thisComp.layer(\"" + ptShape.name + "\"); \r" +
+                        "tan = thisComp.layer(\"" + tanOutShape.name + "\"); \r" +
+                        "ptPos = pt.toWorld(pt.anchorPoint); \r" +
+                        "tanPos = tan.toWorld(tan.anchorPoint); \r" +
+                        "dst = length(ptPos, tanPos); \r" +
+                        "dst";
+                    // // var initial = ptSlide.value;
+                    // ptSlide.setValue(ptSlide.value);
+                    // // ptSlide.expression = ""+ initial;
 
+
+                    
                     ptShape.position.setValue(pathPoints[i]);
                     ptShape.position.expression =
                         "var srcLayer = thisComp.layer(\"" + selectedLayer.name + "\"); \r" +
                         "var srcPath = srcLayer" + pathPath + ".points()[" + i + "]; \r" +
                         "srcLayer.toComp(srcPath);";
-                    ptShape.position.setValue(pointNull.position.value);
+                    ptShape.position.setValue(ptShape.position.value);
                     ptShape.position.expression = '';
 
 
                     // Set position using layer space transforms, then remove expressions
-                    tanOutNull.position.setValue(pathOutTangents[i]);
-                    tanOutNull.position.expression =
-                        "var srcLayer = thisComp.layer(\"" + selectedLayer.name + "\"); \r" +
-                        "var srcPath = srcLayer" + pathPath + ".points()[" + i + "] + srcLayer" + pathPath + ".outTangents()[" + i + "]; \r" +
-                        "srcLayer.toComp(srcPath);";
-                    tanOutNull.position.setValue(tanOutNull.position.value);
-                    tanOutNull.position.expression = '';
 
                     tanOutShape.position.setValue(pathOutTangents[i]);
                     tanOutShape.position.expression =
                         "var srcLayer = thisComp.layer(\"" + selectedLayer.name + "\"); \r" +
                         "var srcPath = srcLayer" + pathPath + ".points()[" + i + "] + srcLayer" + pathPath + ".outTangents()[" + i + "]; \r" +
                         "srcLayer.toComp(srcPath);";
-                    tanOutShape.position.setValue(tanOutNull.position.value);
+                    tanOutShape.position.setValue(tanOutShape.position.value);
                     tanOutShape.position.expression = '';
 
-                    
-                    lineOutGrp.property("ADBE Vector Transform Group")("ADBE Vector Anchor").expression =
-                        
-                    "pt = thisComp.layer(\"" + ptShape.name + "\"); \r" +
-                    "ptPos = pt.toWorld(pt.anchorPoint); \r" +
-                    "radius = pt.content(\"" + ptGrp.name + "\").content(\"" + ringPtGrp.name+ "\").content(\"" + ring.name + "\").size[0]*.5; \r" +
-                    "tanOutPos = thisLayer.toWorld(thisLayer.anchorPoint); \r" +
-                    "sizeX = length(ptPos, tanOutPos)-radius; \r" +
-                    "sizeY = value[1]; \r" +
-                    "[sizeX, sizeY] \r";
+                    tanOutShape.rotation.expression =
+                        "pt = thisComp.layer(\"" + ptShape.name + "\"); \r" +
+                        "ptPos = pt.toWorld(pt.anchorPoint); \r" +
+                        "tanOutPos = thisLayer.toWorld(thisLayer.anchorPoint); \r" +
+                        "v = tanOutPos - ptPos; \r" +
+                        "r= radiansToDegrees( Math.atan2( v[1], v[0] ) ); \r" +
+                        "r";
+
+                    lineOutSize.expression =
+                        "pt = thisComp.layer(\"" + ptShape.name + "\"); \r" +
+                        "ptPos = pt.toWorld(pt.anchorPoint); \r" +
+                        "radius = pt.content(\"" + ptGrp.name + "\").content(\"" + ringPtGrp.name+ "\").content(\"" + ring.name + "\").size[0]*.5; \r" +
+                        "tanOutPos = thisLayer.toWorld(thisLayer.anchorPoint); \r" +
+                        "sizeX = length(ptPos, tanOutPos)-radius; \r" +
+                        "sizeY = value[1]; \r" +
+                        "[sizeX, sizeY] \r";
                                         
-
-
-
-
+                    lineOutGrp.property("ADBE Vector Transform Group")("ADBE Vector Anchor").expression = 
+                        "size = content(\""+ tanOutGrp.name + "\").content(\"" + lineOutGrp.name + "\").content(\""+ lineOut.name + "\").size; \r" +
+                        "aPx = size[0]*0.5; \r" +
+                        "aPy = value[1]; \r"+
+                        "[aPx, aPy]";
 
 
 
 
 
                     // Set position using layer space transforms, then remove expressions
-                    tanInNull.position.setValue(pathInTangents[i]);
-                    tanInNull.position.expression =
-                        "var srcLayer = thisComp.layer(\"" + selectedLayer.name + "\"); \r" +
-                        "var srcPath = srcLayer" + pathPath + ".points()[" + i + "] + srcLayer" + pathPath + ".inTangents()[" + i + "]; \r" +
-                        "srcLayer.toComp(srcPath);";
-                    tanInNull.position.setValue(tanInNull.position.value);
-                    tanInNull.position.expression = '';
-
+                    var tanInTog = tanInShape.property("ADBE Effect Parade").addProperty("ADBE Checkbox Control");
+                    tanInTog.name = "Constrain to Parent";
+                    tanInTog.property("ADBE Checkbox Control-0001").setValue(1);
+                                      
                     tanInShape.position.setValue(pathInTangents[i]);
                     tanInShape.position.expression =
                         "var srcLayer = thisComp.layer(\"" + selectedLayer.name + "\"); \r" +
                         "var srcPath = srcLayer" + pathPath + ".points()[" + i + "] + srcLayer" + pathPath + ".inTangents()[" + i + "]; \r" +
                         "srcLayer.toComp(srcPath);";
-                    tanInShape.position.setValue(tanInNull.position.value);
+                    tanInShape.position.setValue(tanInShape.position.value);
                     tanInShape.position.expression = '';
 
-
-                    var ptGroup = pointNull.property("ADBE Effect Parade").addProperty("ADBE Slider Control");
-                    ptGroup.name = "Init Tangent Out Dist";
-                    ptGroup.property("ADBE Slider Control-0001").expression =
-                        "pt = thisComp.layer(\"" + ptSet[i] + "\"); \r" +
-                        "tan = thisComp.layer(\"" + tanOutSet[i] + "\"); \r" +
+                    lineInSize.expression =
+                        "pt = thisComp.layer(\"" + ptShape.name + "\"); \r" +
                         "ptPos = pt.toWorld(pt.anchorPoint); \r" +
-                        "tanPos = tan.toWorld(tan.anchorPoint); \r" +
-                        "l = length(ptPos, tanPos); \r" +
-                        "l";
-                    ptGroup.property("ADBE Slider Control-0001").setValue(ptGroup.property("ADBE Slider Control-0001").value);
-                    ptGroup.property("ADBE Slider Control-0001").expression = "";
+                        "radius = pt.content(\"" + ptGrp.name + "\").content(\"" + ringPtGrp.name+ "\").content(\"" + ring.name + "\").size[0]*.5; \r" +
+                        "tanInPos = thisLayer.toWorld(thisLayer.anchorPoint); \r" +
+                        "sizeX = length(ptPos, tanInPos)-radius; \r" +
+                        "sizeY = value[1]; \r" +
+                        "[sizeX, sizeY] \r";
 
-                    ///TAN OUT Expressions
-                    tanOutNull.rotation.expression =
-                        "pt = thisComp.layer(\"" + ptSet[i] + "\"); \r" +
-                        "ptPos = pt.toWorld(pt.anchorPoint); \r" +
-                        "tanOutPos = thisLayer.toWorld(thisLayer.anchorPoint); \r" +
-                        "v = tanOutPos - ptPos; \r" +
-                        "r= radiansToDegrees( Math.atan2( v[1], v[0] ) ); \r" +
-                        "r";
-                    
-                    
-                    tanOutShape.rotation.expression =
-                        "pt = thisComp.layer(\"" + ptSet[i] + "\"); \r" +
-                        "ptPos = pt.toWorld(pt.anchorPoint); \r" +
-                        "tanOutPos = thisLayer.toWorld(thisLayer.anchorPoint); \r" +
-                        "v = tanOutPos - ptPos; \r" +
-                        "r= radiansToDegrees( Math.atan2( v[1], v[0] ) ); \r" +
-                        "r";
+                    lineInGrp.property("ADBE Vector Transform Group")("ADBE Vector Anchor").expression = 
+                        "size = content(\""+ tanInGrp.name + "\").content(\"" + lineInGrp.name + "\").content(\""+ lineIn.name + "\").size; \r" +
+                        "aPx = size[0]*0.5; \r" +
+                        "aPy = value[1]; \r"+
+                        "[aPx, aPy]";
 
+                    // tanInShape.position.expression =
+                    //     "tog = effect(\"Constrain to Parent\")(\"Checkbox\"); \r" +
+                    //     "pt = thisComp.layer(\"" + ptShape.name + "\"); \r" +
+                    //     "TanOut = thisComp.layer(\"" + tanOutShape.name + "\"); \r" +
+                    //     "InitTanOutDist = pt.effect(\"Init Tangent Out Dist\")(\"Slider\"); \r" +
+                    //     "ptPos = pt.toWorld(pt.anchorPoint); \r" +
+                    //     "try { \r" +
+                    //     "TanOutPos = parent.toWorld(parent.anchorPoint); \r" +
+                    //     "TanOutDist= length(ptPos, TanOutPos); \r" +
+                    //     "chg = TanOutDist - InitTanOutDist; \r" +
+                    //     "if(tog == 0){y=value[1];} \r" +
+                    //     "else{y=0;} \r" +
+                    //     "} \r" +
+                    //     "catch(err) { chg = 0; y = value[1];} \r" +
+                    //     "x=value[0]-chg; \r" +
+                    //     "[x,y]";
 
-
-                    ////TAN IN Expressions
-                    var tanInTog = tanInNull.property("ADBE Effect Parade").addProperty("ADBE Checkbox Control");
-                    tanInTog.name = "Constrain to Parent";
-                    tanInTog.property("ADBE Checkbox Control-0001").setValue(1);
-                    //set tan in position
-                    tanInNull.position.expression =
-                        "//linkToggle \r" +
-                        "tog = effect(\"Constrain to Parent\")(\"Checkbox\"); \r" +
-                        "//Set Reference Layers \r" +
-                        "pt = thisComp.layer(\"" + ptSet[i] + "\"); \r" +
-                        "TanOut = thisComp.layer(\"" + tanOutSet[i] + "\"); \r" +
-                        "//Get Init Data \r" +
-                        "InitTanOutDist = pt.effect(\"Init Tangent Out Dist\")(\"Slider\"); \r" +
-                        "//Get global point position \r" +
-                        "ptPos = pt.toWorld(pt.anchorPoint); \r" +
-                        "//Calculate Parent Layer Offset \r" +
-                        "try { \r" +
-                        "//Get tanOut Position \r" +
-                        "TanOutPos = parent.toWorld(parent.anchorPoint); \r" +
-                        "//Get TanOutDist \r" +
-                        "TanOutDist= length(ptPos, TanOutPos); \r" +
-                        "//calculate how much TanOut has grown \r" +
-                        "chg = TanOutDist - InitTanOutDist; \r" +
-                        "//constrain to tanOut or not \r" +
-                        "if(tog == 0){y=value[1];} \r" +
-                        "else{y=0;} \r" +
-                        "} \r" +
-                        "catch(err) { chg = 0; y = value[1];} \r" +
-                        "//offset X \r" +
-                        "x=value[0]-chg; \r" +
-                        "//set coordinates \r" +
-                        "[x,y]";
                     //set tan in rotation
-                    tanInNull.rotation.expression =
-                        "//Set Reference Layers \r" +
+                    tanInShape.rotation.expression =
                         "pt = thisComp.layer(\"" + ptSet[i] + "\"); \r" +
-                        "//Get global point position \r" +
                         "ptPos = pt.toWorld(pt.anchorPoint); \r" +
-                        "//Get tanOut Position \r" +
                         "tanPos = thisLayer.toWorld(thisLayer.anchorPoint); \r" +
-                        "//Get angle between Pt and tanOUt \r" +
                         "v = tanPos - ptPos; \r" +
-                        "//check for Parent \r" +
                         "try { \r" +
                         "parentRotate = parent.transform.rotation; \r" +
                         "r= radiansToDegrees( Math.atan2( v[1], v[0] ) ); \r" +
                         "} \r" +
                         "catch(err) { parentRotate = 0; r=radiansToDegrees( Math.atan2( v[1], v[0] ) );} \r" +
-                        "// Output degrees \r" +
                         "r-parentRotate";
-                    
-                    //Assign Parents
-                    tanOutNull.parent = comp.layer(ptSet[i]);
-                    tanInNull.parent = comp.layer(tanOutSet[i]);
+
+
+
+                    ///TAN OUT Expressions
+
+                                        
+
+               
+
+                    tanOutShape.parent = comp.layer(ptSet[i]);
+                    tanInShape.parent = comp.layer(tanOutSet[i]);
                 }
 
             }
