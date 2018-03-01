@@ -306,21 +306,14 @@
                     // Set point position using layer space transforms, then remove expressions
                     var ptGroup = ptShape.property("ADBE Effect Parade").addProperty("ADBE Slider Control");
                     ptGroup.name = "Init Tangent Out Dist";
-                    var ptSlide = ptShape.property("Effects").property("Init Tangent Out Dist");
-                    // ptGroup.property("ADBE Slider Control-0001").expression =
-                    ptSlide.expression=
-                        "pt = thisComp.layer(\"" + ptShape.name + "\"); \r" +
-                        "tan = thisComp.layer(\"" + tanOutShape.name + "\"); \r" +
-                        "ptPos = pt.toWorld(pt.anchorPoint); \r" +
-                        "tanPos = tan.toWorld(tan.anchorPoint); \r" +
-                        "dst = length(ptPos, tanPos); \r" +
-                        "dst";
-                    // // var initial = ptSlide.value;
-                    // ptSlide.setValue(ptSlide.value);
-                    // // ptSlide.expression = ""+ initial;
-
-
-                    
+                    var tanOutCoord = pathOutTangents[i];
+                    var tanOutCoordX = tanOutCoord[0];
+                    var tanOutCoordY = tanOutCoord[1];
+                    var tanOutDistCalc = Math.sqrt(tanOutCoordX*tanOutCoordX+tanOutCoordY*tanOutCoordY);
+                    ptGroup.property("ADBE Slider Control-0001").setValue(tanOutDistCalc);
+                    ptGroup.property("ADBE Slider Control-0001").expression =
+                        tanOutDistCalc;
+                                        
                     ptShape.position.setValue(pathPoints[i]);
                     ptShape.position.expression =
                         "var srcLayer = thisComp.layer(\"" + selectedLayer.name + "\"); \r" +
@@ -395,22 +388,22 @@
                         "aPy = value[1]; \r"+
                         "[aPx, aPy]";
 
-                    // tanInShape.position.expression =
-                    //     "tog = effect(\"Constrain to Parent\")(\"Checkbox\"); \r" +
-                    //     "pt = thisComp.layer(\"" + ptShape.name + "\"); \r" +
-                    //     "TanOut = thisComp.layer(\"" + tanOutShape.name + "\"); \r" +
-                    //     "InitTanOutDist = pt.effect(\"Init Tangent Out Dist\")(\"Slider\"); \r" +
-                    //     "ptPos = pt.toWorld(pt.anchorPoint); \r" +
-                    //     "try { \r" +
-                    //     "TanOutPos = parent.toWorld(parent.anchorPoint); \r" +
-                    //     "TanOutDist= length(ptPos, TanOutPos); \r" +
-                    //     "chg = TanOutDist - InitTanOutDist; \r" +
-                    //     "if(tog == 0){y=value[1];} \r" +
-                    //     "else{y=0;} \r" +
-                    //     "} \r" +
-                    //     "catch(err) { chg = 0; y = value[1];} \r" +
-                    //     "x=value[0]-chg; \r" +
-                    //     "[x,y]";
+                    tanInShape.position.expression =
+                        "tog = effect(\"Constrain to Parent\")(\"Checkbox\"); \r" +
+                        "pt = thisComp.layer(\"" + ptShape.name + "\"); \r" +
+                        "TanOut = thisComp.layer(\"" + tanOutShape.name + "\"); \r" +
+                        "InitTanOutDist = pt.effect(\"Init Tangent Out Dist\")(\"Slider\"); \r" +
+                        "ptPos = pt.toWorld(pt.anchorPoint); \r" +
+                        "try { \r" +
+                        "TanOutPos = parent.toWorld(parent.anchorPoint); \r" +
+                        "TanOutDist= length(ptPos, TanOutPos); \r" +
+                        "chg = TanOutDist - InitTanOutDist; \r" +
+                        "if(tog == 0){y=value[1];} \r" +
+                        "else{y=0;} \r" +
+                        "} \r" +
+                        "catch(err) { chg = 0; y = value[1];} \r" +
+                        "x=value[0]-chg; \r" +
+                        "[x,y]";
 
                     //set tan in rotation
                     tanInShape.rotation.expression =
